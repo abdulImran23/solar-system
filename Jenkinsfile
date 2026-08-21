@@ -28,6 +28,7 @@ pipeline {
                             --format 'ALL'
                             --prettyPrint
                         ''', odcInstallation: 'OWASP-DepCheck12'
+                        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
                     }
                 }
             }
