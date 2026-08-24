@@ -35,11 +35,11 @@ pipeline {
                         publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'Dependency Check HTML Report', reportTitles: '', useWrapperFileDirectly: true])
                     }
                 }
-
-                stage('Unit Tests'){
-                    sh 'npm test'
-                }
             }
+        }
+
+        stage('Unit Tests'){
+            sh 'npm test'
         }
     }
 }
