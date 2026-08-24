@@ -4,6 +4,11 @@ pipeline {
     tools{
         nodejs "nodejs-26.7.0"
     }
+
+    environment {
+        MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
+    }
+
     stages {
         stage('Installing Dependencies') {
             steps {
@@ -40,7 +45,11 @@ pipeline {
 
         stage('Unit Tests'){
             steps{
-                sh 'npm test'
+                withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
+                // some block
+                    sh 'npm test'
+                }
+                junit allowEmptyResults: true, keepProperties: true, testResults: 'test-results.xml'
             }
         }
     }
