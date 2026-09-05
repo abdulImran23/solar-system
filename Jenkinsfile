@@ -7,6 +7,7 @@ pipeline {
 
     environment {
         MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
+        MONGO_DB_Creds = credentials('mongo-db-credentials')
     }
 
     stages {
@@ -57,13 +58,10 @@ pipeline {
 
         stage('Code Coverage') {  
             steps {
-                withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USERNAME')]) {
-                    catchError(buildResult: 'SUCCESS', message: 'Oops! It will be fixed in future Releases', stageResult: 'UNSTABLE') {
-                       sh 'npm run coverage'
-                    }
-                    
-                }
-                publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', reportFiles: 'index.html', reportName: 'Code Coverage HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                catchError(buildResult: 'SUCCESS', message: 'Oops! It will be fixed in future Releases', stageResult: 'UNSTABLE') {
+                    sh 'npm run coverage'
+                }    
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', reportFiles: 'index.html', reportName: 'Code Coverage HTML Report', reportTitles: '', useWrapperFileDirectly: true])
             }
         }
     }
