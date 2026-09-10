@@ -8,6 +8,8 @@ pipeline {
     environment {
         MONGO_URI = "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
         MONGO_DB_Creds = credentials('mongo-db-credentials')
+        MONGO_DB_USER = credentials('mongo-db-username')
+        MONGO_DB_PASSWORD = credentials('mongo-db-psw')
     }
 
     stages {
@@ -34,12 +36,7 @@ pipeline {
                             --format 'ALL'
                             --prettyPrint
                         ''', odcInstallation: 'OWASP-DepCheck12'
-                        dependencyCheckPublisher failedTotalCritical: 1, pattern: 'dependency-check-report.xml', stopBuild: true
-                        
-                        junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-junit.xml'
-                        
-                        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'Dependency Check HTML Report', reportTitles: '', useWrapperFileDirectly: true])
-                    }
+                        dependencyCheckPublisher failedTotalCritical: 1, pattern: 'dependency-check-report.xml', stopBuild: true                        
                 }
             }
         }
@@ -60,8 +57,17 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', message: 'Oops! It will be fixed in future Releases', stageResult: 'UNSTABLE') {
                     sh 'npm run coverage'
-                }    
+                }
+            }
+        }
+
+    }
+    post {
+        always {
+            // One or more steps need to be included within each condition's block.
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', reportFiles: 'index.html', reportName: 'Code Coverage HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'Dependency Check HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+            junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-junit.xml'
             }
         }
     }
