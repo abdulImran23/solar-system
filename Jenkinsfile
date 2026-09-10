@@ -36,7 +36,8 @@ pipeline {
                             --format 'ALL'
                             --prettyPrint
                         ''', odcInstallation: 'OWASP-DepCheck12'
-                        dependencyCheckPublisher failedTotalCritical: 1, pattern: 'dependency-check-report.xml', stopBuild: true                        
+                        dependencyCheckPublisher failedTotalCritical: 1, pattern: 'dependency-check-report.xml', stopBuild: true 
+                    }
                 }
             }
         }
@@ -66,9 +67,8 @@ pipeline {
         always {
             // One or more steps need to be included within each condition's block.
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report/', reportFiles: 'index.html', reportName: 'Code Coverage HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+            junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-junit.xml'            
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'Dependency Check HTML Report', reportTitles: '', useWrapperFileDirectly: true])
-            junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-junit.xml'
-            }
         }
     }
 }
