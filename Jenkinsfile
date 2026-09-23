@@ -72,16 +72,27 @@ pipeline {
         stage('Trivy Vulnerability Scanner') {
             steps {
                 sh '''
+                    echo "========================================"
+                    echo "Trivy LOW, MEDIUM and HIGH scan"
+                    echo "========================================"
+
                     trivy image "abdul23/solar-system:$GIT_COMMIT" \
                     --severity LOW,MEDIUM,HIGH \
                     --exit-code 0 \
                     --quiet \
-                    --format json -o trivy-image-MEDIUM-results.json \
+                    --format json \
+                    --output trivy-image-MEDIUM-results.json \
+
+                    echo "========================================" 
+                    echo "Trivy CRITICAL scan"
+                    echo "========================================"
+
                     trivy image "abdul23/solar-system:$GIT_COMMIT" \
                     --severity CRITICAL \
                     --exit-code 1 \
                     --quiet \
-                    --format json -o trivy-image-CRITICAL-results.json
+                    --format json \
+                    --output trivy-image-CRITICAL-results.json
                 '''
             }
             post {
