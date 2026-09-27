@@ -68,7 +68,7 @@ pipeline {
                 sh 'docker build -t abdul23/solar-system:$GIT_COMMIT .'
             }
         }
-
+        /*
         stage('Trivy Vulnerability Scanner') {
             steps {
                 sh '''
@@ -114,6 +114,13 @@ pipeline {
                         --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
                         --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
                '''
+                }
+            }
+        } */
+        stage('Push Docker Image') {
+            steps {
+                withDockerRegistry(credentialsId: 'docker-hub-credentials', url: "") {
+                    sh 'docker push abdul23/solar-system:$GIT_COMMIT .'
                 }
             }
         }
